@@ -1,0 +1,34 @@
+[
+  {
+    "word":"fretful",
+    "score":398,
+    "numSyllables":2
+  },
+  {
+    "word":"regretful",
+    "score":302,
+    "numSyllables":3
+  },
+  {
+    "word":"threatful",
+    "score":129,
+    "numSyllables":2
+  },
+  {
+    "word":"netful",
+    "score":28,
+    "numSyllables":2
+  },
+  {
+    "word":"let phil",
+    "numSyllables":2
+  },
+  {
+    "word":"met phil",
+    "numSyllables":2
+  },
+  {
+    "word":"set fill",
+    "numSyllables":2
+  }
+]

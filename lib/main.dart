@@ -1,63 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:datamuse/datamuse.dart';
-import 'dart:async';
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
-
-Future<List<RhymeWord>> fetchWords() async {
-  final response = await http
-      .get(Uri.parse('https://api.datamuse.com/words?rel_rhy=forgetful'));
-
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
-    final List<RhymeWord> rhymeWords = RhymeWord.fromJson(jsonDecode(response.body));
-    return
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load album');
-  }
-}
-
-
-
-List<RhymeWord> rhymeWordFromJson(String str) => List<RhymeWord>.from(json.decode(str).map((x) => RhymeWord.fromJson(x)));
-String rhymeWordToJson(List<RhymeWord> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
-
-class RhymeWord {
-  RhymeWord({
-    required this.word,
-    required this.score,
-    required this.numSyllables,
-  });
-
-  String word;
-  int score;
-  int numSyllables;
-
-  factory RhymeWord.fromJson(Map<String, dynamic> json) => RhymeWord(
-    word: json["word"],
-    score: json["score"],
-    numSyllables: json["numSyllables"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "word": word,
-    "score": score,
-    "numSyllables": numSyllables,
-  };
-}
-
-
+import 'package:flutterapp/dataparsing.dart';
+import 'package:flutterapp/getwords.dart';
 
 
 void main() => runApp(const MyApp());
-
 
 
 class MyApp extends StatefulWidget {
@@ -68,13 +15,25 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp>{
-  late Future<List<RhymeWord>> futureAlbum;
+
+  List<RhymeWord>? _rhymeWords;
+  bool? _loading;
+
 
   @override
-  void initState() {
+  void initState(){
     super.initState();
-    futureAlbum = fetchWords();
+    _loading = true;
+    Services.getRhymeWords().then((rhymeWords) {
+      setState(() {
+        _rhymeWords = rhymeWords;
+        _loading = false;
+      });
+    });
   }
+
+
+
 
   @override
   Widget build(BuildContext context){
@@ -91,6 +50,30 @@ class _MyAppState extends State<MyApp>{
                 )
             ),
         ),
+
+        body: Container(
+
+          color: Colors.white,
+          child: ListView.builder(
+
+              itemCount: null == _rhymeWords ? 0 : _rhymeWords!.length,
+              itemBuilder: (context, index){
+
+
+            RhymeWord rhymeWord = _rhymeWords![index];
+            return ListTile(
+              leading: FlutterLogo(),
+              title: Text(rhymeWord.word),
+            );
+
+
+          })
+
+
+
+        ),
+
+
       )
     );
   }
