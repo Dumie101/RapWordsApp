@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutterapp/dataparsing.dart';
 import 'package:flutterapp/getwords.dart';
-
 
 void main() => runApp(const MyApp());
 
@@ -23,13 +23,6 @@ class _MyAppState extends State<MyApp>{
   @override
   void initState(){
     super.initState();
-    _loading = true;
-    Services.getRhymeWords().then((rhymeWords) {
-      setState(() {
-        _rhymeWords = rhymeWords;
-        _loading = false;
-      });
-    });
   }
 
 
@@ -37,41 +30,53 @@ class _MyAppState extends State<MyApp>{
 
   @override
   Widget build(BuildContext context){
+
+    Widget customSearchBar = const Text('Rap Words Generator');
+    final _textController = TextEditingController();
+
     return MaterialApp(
-        theme: ThemeData(primaryColor: Colors.redAccent),
       home: Scaffold(
         appBar: AppBar(
-            backgroundColor: Colors.black,
-            title: const Center(
-                child:
-                Text('Rap Words Generator',
-                    style:
-                    TextStyle(color: Colors.blueAccent)
-                )
-            ),
+          title: customSearchBar,
+          centerTitle: true,
         ),
 
-        body: Container(
 
-          color: Colors.white,
-          child: ListView.builder(
+        body:
+          Column (
+            children: [
+              TextField(
+                controller: _textController,
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  border: OutlineInputBorder(),
+                  suffixIcon: IconButton(onPressed: (){
+                    _textController.clear();
+                  }, icon: Icon(Icons.clear))
+                  
+                ),
 
-              itemCount: null == _rhymeWords ? 0 : _rhymeWords!.length,
-              itemBuilder: (context, index){
+                onSubmitted:(value){
+                  Services.getRhymeWords(value).then((rhymeWords) {
+                    setState(() {
+                      _rhymeWords = rhymeWords;
+                    });
+                  });
+                }
+              ),
 
 
-            RhymeWord rhymeWord = _rhymeWords![index];
-            return ListTile(
-              leading: FlutterLogo(),
-              title: Text(rhymeWord.word),
-            );
-
-
-          })
-
-
-
-        ),
+              Expanded(child: ListView.builder(
+                  itemCount: null == _rhymeWords ? 0 : _rhymeWords!.length,
+                  itemBuilder: (context, index){
+                    RhymeWord rhymeWord = _rhymeWords![index];
+                    return ListTile(
+                      title: Text(rhymeWord.word),
+                    );
+                  })
+              )
+            ],
+          ),
 
 
       )

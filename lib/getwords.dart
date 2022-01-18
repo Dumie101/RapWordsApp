@@ -6,12 +6,12 @@ import 'package:http/http.dart' as http;
 
 class Services{
 
-  static const String url = 'https://api.datamuse.com/words?rel_rhy=duck';
 
-  static Future<List<RhymeWord>> getRhymeWords() async{
+  static Future<List<RhymeWord>> getRhymeWords(String value) async{
 
+      String url = 'https://api.datamuse.com/words?rel_rhy=' + value;
 
-      final response = await http.get(Uri.parse('https://api.datamuse.com/words?rel_rhy=duck'));
+      final response = await http.get(Uri.parse(url));
 
       if(200 == response.statusCode){
 
