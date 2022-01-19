@@ -37,6 +37,7 @@ dependencies:
   datamuse: ^0.2.0
   http: ^0.13.4
   html: ^0.15.0
+  animated_text_kit: ^4.2.1
 
 dev_dependencies:
   flutter_test:
@@ -55,7 +56,7 @@ dev_dependencies:
 # The following section is specific to Flutter.
 flutter:
   assets:
-    - assets/images/clip-art-rapper-drawing-rappers-black-and-white-clothing-apparel-hood-helmet-transparent-png-831931.png
+    - assets/images/output-onlinepngtools (2).png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

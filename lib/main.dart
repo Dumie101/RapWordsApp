@@ -1,9 +1,17 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutterapp/dataparsing.dart';
 import 'package:flutterapp/getwords.dart';
+import 'package:flutterapp/homepage.dart';
 
-void main() => runApp(const MyApp());
+
+void main(){
+  runApp(
+    MaterialApp(
+      home: MyApp(),
+    ));
+}
 
 
 class MyApp extends StatefulWidget {
@@ -16,15 +24,71 @@ class MyApp extends StatefulWidget {
 
 class _Home extends State<MyApp> {
 
+  final _textController = TextEditingController();
+  List<RhymeWord>? _rhymeWords;
+
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Builder(
           builder: (context) {
             return Scaffold(
+              body: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    child: Image.asset('assets/images/output-onlinepngtools (2).png'),
+                    margin: EdgeInsets.only(left: 0, top:100, right: 0, bottom:0),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(left: 35, top:0, right: 0, bottom:0),
+                    child: DefaultTextStyle(
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.bold
+                      ),
+                      child: AnimatedTextKit(
+                          repeatForever: true,
+                        animatedTexts: [
+                          TypewriterAnimatedText('Rhyme Word Generator', speed: const Duration(milliseconds: 100)),
+                        ],
+                      ),
+                    ),
+                  ),
 
-              body: Image.asset('assets/images/clip-art-rapper-drawing-rappers-black-and-white-clothing-apparel-hood-helmet-transparent-png-831931.png'),
 
+                  Container(
+                    child: TextField(
+                        controller: _textController,
+                        decoration: InputDecoration(
+                            hintText: 'Search',
+                            border: OutlineInputBorder(),
+                            suffixIcon: IconButton(onPressed: (){
+                              _textController.clear();
+                            }, icon: Icon(Icons.clear))
+                        ),
+
+                        onSubmitted:(value){
+                          Services.getRhymeWords(value).then((rhymeWords) {
+                            setState(() {
+                              _rhymeWords = rhymeWords;
+                            });
+
+                            Navigator.push(
+                                context, MaterialPageRoute(builder: (context) => MyAppState() )
+                            );
+
+                          });
+                        }
+                    ),
+                  )
+
+
+                ],
+              )
             );
           }
         )
@@ -34,89 +98,5 @@ class _Home extends State<MyApp> {
 
 }
 
-
-
-
-class _MyAppState extends State<MyApp>{
-
-  List<RhymeWord>? _rhymeWords;
-
-  @override
-  void initState(){
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context){
-
-    Widget customSearchBar = const Text('Rap Words Generator');
-    final _textController = TextEditingController();
-
-    return MaterialApp(
-      home: Builder(
-        builder: (context) {
-          return Scaffold(
-            appBar: AppBar(
-              title: customSearchBar,
-              centerTitle: true,
-            ),
-            body:
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      controller: _textController,
-                      decoration: InputDecoration(
-                        hintText: 'Search',
-                        border: OutlineInputBorder(),
-                        suffixIcon: IconButton(onPressed: (){
-                          _textController.clear();
-                        }, icon: Icon(Icons.clear))
-
-                      ),
-
-                      onSubmitted:(value){
-                        Services.getRhymeWords(value).then((rhymeWords) {
-                          setState(() {
-                            _rhymeWords = rhymeWords;
-                          });
-                        });
-                      }
-                    ),
-                  ),
-
-                  Expanded(child: ListView.builder(
-                      itemCount: null == _rhymeWords ? 0 : _rhymeWords!.length,
-                      itemBuilder: (context, index){
-                        RhymeWord rhymeWord = _rhymeWords![index];
-                        return ListTile(
-                          title: Text(rhymeWord.word),
-                        );
-                      })
-                  )
-                ],
-              ),
-
-            bottomNavigationBar: BottomNavigationBar(
-              items: [
-                BottomNavigationBarItem(
-                  icon: IconButton(onPressed: (){
-                    // Nav
-                  }, icon: const Icon(Icons.arrow_back_ios)),
-                  label: 'Back'
-                ),
-                const BottomNavigationBarItem(
-                  icon: Icon(Icons.article_sharp),
-                  label: 'Notepad',
-                ),
-              ],
-            ),
-          );
-        }
-      )
-    );
-  }
-}
 
 
