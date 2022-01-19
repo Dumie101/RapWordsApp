@@ -5,13 +5,20 @@ import 'package:flutterapp/getwords.dart';
 import 'package:flutterapp/dataparsing.dart';
 
 
+class MyMainPage extends StatefulWidget {
+  final List<RhymeWord>? words;
+  const MyMainPage({Key? key, required this.words}) : super(key: key);
 
 
 
+  @override
+  _MyMainPageState createState() => _MyMainPageState(words:words);
+}
 
-class MyAppState extends State<MyApp>{
 
-  List<RhymeWord>? _rhymeWords;
+class _MyMainPageState extends State<MyMainPage>{
+  List<RhymeWord>? words;
+  _MyMainPageState({required this.words}){}
 
 
   @override
@@ -41,12 +48,13 @@ class MyAppState extends State<MyApp>{
                               suffixIcon: IconButton(onPressed: (){
                                 _textController.clear();
                               }, icon: Icon(Icons.clear))
+
                           ),
 
                           onSubmitted:(value){
                             Services.getRhymeWords(value).then((rhymeWords) {
                               setState(() {
-                                _rhymeWords = rhymeWords;
+                                words = rhymeWords;
                               });
                             });
                           }
@@ -54,9 +62,9 @@ class MyAppState extends State<MyApp>{
                     ),
 
                     Expanded(child: ListView.builder(
-                        itemCount: null == _rhymeWords ? 0 : _rhymeWords!.length,
+                        itemCount: null == words ? 0 : words!.length,
                         itemBuilder: (context, index){
-                          RhymeWord rhymeWord = _rhymeWords![index];
+                          RhymeWord rhymeWord = words![index];
                           return ListTile(
                             title: Text(rhymeWord.word),
                           );
@@ -84,6 +92,8 @@ class MyAppState extends State<MyApp>{
         )
     );
   }
+
+
 }
 
 

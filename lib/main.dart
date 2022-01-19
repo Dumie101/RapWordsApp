@@ -6,23 +6,10 @@ import 'package:flutterapp/getwords.dart';
 import 'package:flutterapp/homepage.dart';
 
 
-void main(){
-  runApp(
-    MaterialApp(
-      home: MyApp(),
-    ));
-}
+void main() => runApp(HomePage());
 
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  _Home createState() => _Home();
-}
-
-
-class _Home extends State<MyApp> {
+class HomePage extends StatelessWidget {
 
   final _textController = TextEditingController();
   List<RhymeWord>? _rhymeWords;
@@ -73,16 +60,17 @@ class _Home extends State<MyApp> {
 
                         onSubmitted:(value){
                           Services.getRhymeWords(value).then((rhymeWords) {
-                            setState(() {
-                              _rhymeWords = rhymeWords;
-                            });
+
 
                             Navigator.push(
-                                context, MaterialPageRoute(builder: (context) => MyAppState() )
+                                context, MaterialPageRoute(builder: (context) => MyMainPage(words: rhymeWords ))
                             );
 
                           });
+
+
                         }
+
                     ),
                   )
 
