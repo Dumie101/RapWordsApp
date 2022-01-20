@@ -3,99 +3,83 @@ import 'package:flutterapp/main.dart';
 import 'package:flutterapp/homepage.dart';
 import 'package:flutterapp/getwords.dart';
 import 'package:flutterapp/dataparsing.dart';
-
+import 'package:flutterapp/searchpage.dart';
 
 class MyMainPage extends StatefulWidget {
   final List<RhymeWord>? words;
+
   const MyMainPage({Key? key, required this.words}) : super(key: key);
 
-
-
   @override
-  _MyMainPageState createState() => _MyMainPageState(words:words);
+  _MyMainPageState createState() => _MyMainPageState(words: words);
 }
 
-
-class _MyMainPageState extends State<MyMainPage>{
+class _MyMainPageState extends State<MyMainPage> {
   List<RhymeWord>? words;
-  _MyMainPageState({required this.words}){}
 
+  _MyMainPageState({required this.words}) {}
 
   @override
-  Widget build(BuildContext context){
-
-    Widget customSearchBar = const Text('Rap Words Generator');
+  Widget build(BuildContext context) {
     final _textController = TextEditingController();
 
-    return MaterialApp(
-        home: Builder(
-            builder: (context) {
-              return Scaffold(
-                appBar: AppBar(
-                  title: customSearchBar,
-                  centerTitle: true,
-                ),
-                body:
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                          controller: _textController,
-                          decoration: InputDecoration(
-                              hintText: 'Search',
-                              border: OutlineInputBorder(),
-                              suffixIcon: IconButton(onPressed: (){
-                                _textController.clear();
-                              }, icon: Icon(Icons.clear))
-
+    return MaterialApp(home: Builder(builder: (context) {
+      return Scaffold(
+        body: Column(
+          children: [
+            Container(
+              child: Expanded(
+                  child: ListView.builder(
+                      itemCount: null == words ? 0 : words!.length,
+                      itemBuilder: (context, index) {
+                        RhymeWord rhymeWord = words![index];
+                        return Card(
+                          child: ListTile(
+                            title: Text(
+                              rhymeWord.word,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-
-                          onSubmitted:(value){
-                            Services.getRhymeWords(value).then((rhymeWords) {
-                              setState(() {
-                                words = rhymeWords;
-                              });
-                            });
-                          }
-                      ),
-                    ),
-
-                    Expanded(child: ListView.builder(
-                        itemCount: null == words ? 0 : words!.length,
-                        itemBuilder: (context, index){
-                          RhymeWord rhymeWord = words![index];
-                          return ListTile(
-                            title: Text(rhymeWord.word),
-                          );
-                        })
-                    )
-                  ],
-                ),
-
-                bottomNavigationBar: BottomNavigationBar(
-                  items: [
-                    BottomNavigationBarItem(
-                        icon: IconButton(onPressed: (){
-                          // Nav
-                        }, icon: const Icon(Icons.arrow_back_ios)),
-                        label: 'Back'
-                    ),
-                    const BottomNavigationBarItem(
-                      icon: Icon(Icons.article_sharp),
-                      label: 'Notepad',
-                    ),
-                  ],
-                ),
-              );
-            }
-        )
-    );
+                        );
+                      })),
+            )
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          items: [
+            BottomNavigationBarItem(
+              icon: IconButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HomePage()));
+                  },
+                  icon: const Icon(Icons.home)),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+                icon: IconButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => SearchPage()));
+                    },
+                    icon: const Icon(Icons.search)),
+                label: 'Search'),
+            BottomNavigationBarItem(
+                icon: IconButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => HomePage()));
+                    },
+                    icon: const Icon(Icons.feed_outlined)),
+                label: 'Notepad'),
+          ],
+        ),
+      );
+    }));
   }
-
-
 }
-
-
-
-
