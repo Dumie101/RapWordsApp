@@ -1,8 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterapp/main.dart';
-import 'package:flutterapp/homepage.dart';
-import 'package:flutterapp/getwords.dart';
 import 'package:flutterapp/dataparsing.dart';
 import 'package:flutterapp/searchpage.dart';
 
@@ -13,20 +11,31 @@ class MyMainPage extends StatefulWidget {
 
   @override
   _MyMainPageState createState() => _MyMainPageState(words: words);
+
+
 }
 
 class _MyMainPageState extends State<MyMainPage> {
-  List<RhymeWord>? words;
 
+  List<RhymeWord>? words;
   _MyMainPageState({required this.words});
+
 
   @override
   Widget build(BuildContext context) {
+
+    bool containsWords = words!.isNotEmpty;
+
     return MaterialApp(home: Builder(builder: (context) {
       return Scaffold(
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [NewWidget(words: words)],
+          children : [
+
+            containsWords==true?
+            NewWidget(words: words)
+                : NewWidget2()
+          ],
         ),
         bottomNavigationBar: BottomNavigationBar(
           showSelectedLabels: false,
