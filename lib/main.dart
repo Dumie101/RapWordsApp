@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutterapp/landing_page.dart';
 import 'package:flutterapp/data_parsing.dart';
 import 'package:flutterapp/provider/bookmark_model.dart';
-import 'package:flutterapp/provider/word_model.dart';
 import 'package:flutterapp/search_page.dart';
 import 'package:flutterapp/get_words.dart';
 import 'package:provider/provider.dart';
@@ -14,10 +13,12 @@ class MyMainPage extends StatefulWidget {
   final List<RhymeWord>? words;
   final List<Color> colors;
 
-  MyMainPage({Key? key, required this.words, required this.colors}) : super(key: key);
+  const MyMainPage({Key? key, required this.words, required this.colors})
+      : super(key: key);
 
   @override
-  _MyMainPageState createState() => _MyMainPageState(words: words, colors: colors);
+  _MyMainPageState createState() =>
+      _MyMainPageState(words: words, colors: colors);
 }
 
 class _MyMainPageState extends State<MyMainPage> {
@@ -26,18 +27,57 @@ class _MyMainPageState extends State<MyMainPage> {
   List<RhymeWord>? words;
   List<Color> colors;
 
-  late Color normalColor = Colors.blueGrey;
-
-
-
-
+  bool isSearching = false;
 
   @override
   Widget build(BuildContext context) {
     bool containsWords = words!.isNotEmpty;
+    final _textController = TextEditingController();
 
     return MaterialApp(
         home: Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: isSearching
+            ? TextField(
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            errorBorder: InputBorder.none,
+            disabledBorder: InputBorder.none,
+            hintText: "Search ..."
+          ),
+                controller: _textController,
+                onSubmitted: (value) {
+                  Services.getRhymeWords(value).then((rhymeWords) {
+                    List<Color> colors = List.generate(
+                        rhymeWords.length, (index) => Colors.blueGrey);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                MyMainPage(words: rhymeWords, colors: colors)));
+                  });
+                })
+            : Text("Rhyme Words", style: TextStyle(color: Colors.black)),
+        actions: [
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  isSearching = !isSearching;
+                });
+              },
+              icon: isSearching ? Icon(
+                Icons.cancel,
+                color: Colors.black,
+              )  : Icon(
+                Icons.search,
+                color: Colors.black,
+              )
+          )
+        ],
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -64,8 +104,9 @@ class _MyMainPageState extends State<MyMainPage> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              MyMainPage(words: rhymeWords, colors: colors)));
+                                          builder: (context) => MyMainPage(
+                                              words: rhymeWords,
+                                              colors: colors)));
                                 });
                               },
                               trailing: IconButton(
@@ -75,12 +116,11 @@ class _MyMainPageState extends State<MyMainPage> {
                                     print(colors[index]);
                                     if (colors[index] == Colors.blueGrey) {
                                       colors[index] = Colors.green;
+                                      wordBloc.addItems(rhymeWord.word);
                                     } else {
                                       colors[index] = Colors.blueGrey;
+                                      wordBloc.removeItems(rhymeWord.word);
                                     }
-                                    print(colors[index]);
-                                    wordBloc.count();
-                                    wordBloc.addItems(rhymeWord.word);
                                   });
                                 },
                               )),
@@ -160,4 +200,3 @@ class TextViewForNoWords extends StatelessWidget {
     );
   }
 }
-

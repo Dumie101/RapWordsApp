@@ -1,5 +1,4 @@
  import 'package:flutter/cupertino.dart';
-import 'package:flutterapp/provider/word_model.dart';
 
 class WordBloc extends ChangeNotifier{
 
@@ -10,13 +9,16 @@ class WordBloc extends ChangeNotifier{
 
   void addItems(String data){
     items.add(data);
-    notifyListeners();
-  }
-
-  void count(){
     _count++;
     notifyListeners();
   }
+
+  void removeItems(String data){
+    items.remove(data);
+    _count--;
+    notifyListeners();
+  }
+
 
   int get getCount{
     return _count;
