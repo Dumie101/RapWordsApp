@@ -12,18 +12,24 @@ import 'fav_page.dart';
 
 class MyMainPage extends StatefulWidget {
   final List<RhymeWord>? words;
+  final List<Color> colors;
 
-  const MyMainPage({Key? key, required this.words}) : super(key: key);
+  MyMainPage({Key? key, required this.words, required this.colors}) : super(key: key);
 
   @override
-  _MyMainPageState createState() => _MyMainPageState(words: words);
+  _MyMainPageState createState() => _MyMainPageState(words: words, colors: colors);
 }
 
 class _MyMainPageState extends State<MyMainPage> {
-  _MyMainPageState({required this.words});
+  _MyMainPageState({required this.words, required this.colors});
 
   List<RhymeWord>? words;
+  List<Color> colors;
+
   late Color normalColor = Colors.blueGrey;
+
+
+
 
 
   @override
@@ -37,46 +43,50 @@ class _MyMainPageState extends State<MyMainPage> {
         children: [
           containsWords == true
               ? Expanded(
-                child: ListView.builder(
-                itemCount: null == widget.words ? 0 : widget.words!.length,
-                itemBuilder: (context, index) {
-                  RhymeWord rhymeWord = widget.words![index];
-                  var wordBloc = Provider.of<WordBloc>(context);
-                  return Card(
-                    child: ListTile(
-                        title: Text(
-                          rhymeWord.word,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onTap: () {
-                          Services.getRhymeWords(rhymeWord.word).then((rhymeWords) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        MyMainPage(words: rhymeWords)));
-                          });
-                        },
-                        trailing: IconButton(
-                          icon: Icon(Icons.star, color: normalColor),
-                          onPressed: () {
-                            setState(() {
-                              if ( normalColor == Colors.blueGrey){
-                                normalColor = Colors.green;
-                              } else {
-                                normalColor = Colors.blueGrey;
-                              }
-                              wordBloc.count();
-                              wordBloc.addItems(rhymeWord.word);
-                            });
-                          },
-                        )),
-                  );
-                    }),
-              )
+                  child: ListView.builder(
+                      itemCount:
+                          null == widget.words ? 0 : widget.words!.length,
+                      itemBuilder: (context, index) {
+                        RhymeWord rhymeWord = widget.words![index];
+                        var wordBloc = Provider.of<WordBloc>(context);
+                        return Card(
+                          child: ListTile(
+                              title: Text(
+                                rhymeWord.word,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              onTap: () {
+                                Services.getRhymeWords(rhymeWord.word)
+                                    .then((rhymeWords) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              MyMainPage(words: rhymeWords, colors: colors)));
+                                });
+                              },
+                              trailing: IconButton(
+                                icon: Icon(Icons.star, color: colors[index]),
+                                onPressed: () {
+                                  setState(() {
+                                    print(colors[index]);
+                                    if (colors[index] == Colors.blueGrey) {
+                                      colors[index] = Colors.green;
+                                    } else {
+                                      colors[index] = Colors.blueGrey;
+                                    }
+                                    print(colors[index]);
+                                    wordBloc.count();
+                                    wordBloc.addItems(rhymeWord.word);
+                                  });
+                                },
+                              )),
+                        );
+                      }),
+                )
               : TextViewForNoWords()
         ],
       ),
@@ -151,65 +161,3 @@ class TextViewForNoWords extends StatelessWidget {
   }
 }
 
-class ListViewOfRhymeWords extends StatefulWidget {
-  const ListViewOfRhymeWords({
-    Key? key,
-    required this.words,
-  }) : super(key: key);
-
-  final List<RhymeWord>? words;
-
-  @override
-  State<ListViewOfRhymeWords> createState() => _ListViewOfRhymeWordsState();
-}
-
-class _ListViewOfRhymeWordsState extends State<ListViewOfRhymeWords> {
-
-  late Color normalColor;
-
-  @override
-  Widget build(BuildContext context) {
-
-    normalColor = Colors.blueGrey;
-
-    return Expanded(
-        child: ListView.builder(
-            itemCount: null == widget.words ? 0 : widget.words!.length,
-            itemBuilder: (context, index) {
-              RhymeWord rhymeWord = widget.words![index];
-              var wordBloc = Provider.of<WordBloc>(context);
-
-              return Card(
-                child: ListTile(
-                    title: Text(
-                      rhymeWord.word,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onTap: () {
-                      Services.getRhymeWords(rhymeWord.word).then((rhymeWords) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    MyMainPage(words: rhymeWords)));
-                      });
-                    },
-                    trailing: IconButton(
-                      icon: Icon(Icons.star, color: normalColor),
-                      onPressed: () {
-                        setState(() {
-                          if ( normalColor == Colors.blueGrey){
-                            normalColor == Colors.green;
-                          } else {
-                            normalColor == Colors.blueGrey;
-                          }
-                        });
-                      },
-                    )),
-              );
-            }));
-  }
-}

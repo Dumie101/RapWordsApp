@@ -65,11 +65,12 @@ class _LandingPage extends State<HomePage> {
                           icon: const Icon(Icons.clear))),
                   onSubmitted: (value) {
                     Services.getRhymeWords(value).then((rhymeWords) {
+                      List<Color> colors =  List.generate(rhymeWords.length, (index) => Colors.blueGrey);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  MyMainPage(words: rhymeWords)));
+                                  MyMainPage(words: rhymeWords, colors: colors)));
                     });
                   }),
             ),
