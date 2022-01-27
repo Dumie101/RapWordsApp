@@ -1,10 +1,10 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterapp/landing_page.dart';
-import 'package:flutterapp/data_parsing.dart';
+import 'package:flutterapp/appfiles/home_page.dart';
+import 'package:flutterapp/api/data_parsing.dart';
 import 'package:flutterapp/provider/bookmark_model.dart';
-import 'package:flutterapp/search_page.dart';
-import 'package:flutterapp/get_words.dart';
+import 'package:flutterapp/appfiles/search_page.dart';
+import 'package:flutterapp/api/get_words.dart';
 import 'package:provider/provider.dart';
 
 import 'fav_page.dart';
@@ -39,28 +39,8 @@ class _MyMainPageState extends State<MyMainPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: isSearching
-            ? TextField(
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            errorBorder: InputBorder.none,
-            disabledBorder: InputBorder.none,
-            hintText: "Search ..."
-          ),
-                controller: _textController,
-                onSubmitted: (value) {
-                  Services.getRhymeWords(value).then((rhymeWords) {
-                    List<Color> colors = List.generate(
-                        rhymeWords.length, (index) => Colors.blueGrey);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                MyMainPage(words: rhymeWords, colors: colors)));
-                  });
-                })
-            : Text("Rhyme Words", style: TextStyle(color: Colors.black)),
+            ? AppBarSearchBar(textController: _textController)
+            : const Text("Rhyme Words", style: TextStyle(color: Colors.black)),
         actions: [
           IconButton(
               onPressed: () {
@@ -68,14 +48,15 @@ class _MyMainPageState extends State<MyMainPage> {
                   isSearching = !isSearching;
                 });
               },
-              icon: isSearching ? Icon(
-                Icons.cancel,
-                color: Colors.black,
-              )  : Icon(
-                Icons.search,
-                color: Colors.black,
-              )
-          )
+              icon: isSearching
+                  ? const Icon(
+                      Icons.cancel,
+                      color: Colors.black,
+                    )
+                  : const Icon(
+                      Icons.search,
+                      color: Colors.black,
+                    ))
         ],
       ),
       body: Column(
@@ -113,7 +94,6 @@ class _MyMainPageState extends State<MyMainPage> {
                                 icon: Icon(Icons.star, color: colors[index]),
                                 onPressed: () {
                                   setState(() {
-                                    print(colors[index]);
                                     if (colors[index] == Colors.blueGrey) {
                                       colors[index] = Colors.green;
                                       wordBloc.addItems(rhymeWord.word);
@@ -127,16 +107,73 @@ class _MyMainPageState extends State<MyMainPage> {
                         );
                       }),
                 )
-              : TextViewForNoWords()
+              : const TextViewForNoWords()
         ],
       ),
-      bottomNavigationBar: buildBottomNav(),
+      bottomNavigationBar: const BuildBottomNav(),
     ));
   }
 }
 
-class buildBottomNav extends StatelessWidget {
-  const buildBottomNav({
+class AppBarSearchBar extends StatelessWidget {
+  const AppBarSearchBar({
+    Key? key,
+    required TextEditingController textController,
+  })  : _textController = textController,
+        super(key: key);
+
+  final TextEditingController _textController;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+        decoration: const InputDecoration(
+            border: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            errorBorder: InputBorder.none,
+            disabledBorder: InputBorder.none,
+            hintText: "Search ..."),
+        controller: _textController,
+        onSubmitted: (userInput) {
+          Services.getRhymeWords(userInput).then((rhymeWords) {
+            List<Color> colors =
+                List.generate(rhymeWords.length, (index) => Colors.blueGrey);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        MyMainPage(words: rhymeWords, colors: colors)));
+          });
+        });
+  }
+}
+
+class TextViewForNoWords extends StatelessWidget {
+  const TextViewForNoWords({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: DefaultTextStyle(
+        style: const TextStyle(
+            color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
+        child: AnimatedTextKit(
+          repeatForever: true,
+          animatedTexts: [
+            TyperAnimatedText('No Rhyme Words Found.'),
+            TyperAnimatedText('Search Again.')
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BuildBottomNav extends StatelessWidget {
+  const BuildBottomNav({
     Key? key,
   }) : super(key: key);
 
@@ -150,7 +187,7 @@ class buildBottomNav extends StatelessWidget {
           icon: IconButton(
               onPressed: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => HomePage()));
+                    MaterialPageRoute(builder: (context) => const HomePage()));
               },
               icon: const Icon(Icons.home)),
           label: 'Home',
@@ -159,44 +196,11 @@ class buildBottomNav extends StatelessWidget {
             icon: IconButton(
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SearchPage()));
+                      MaterialPageRoute(builder: (context) => const FavPage()));
                 },
-                icon: const Icon(Icons.search)),
-            label: 'Search'),
-        BottomNavigationBarItem(
-            icon: IconButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => FavPage()));
-                },
-                icon: const Icon(Icons.feed_outlined)),
-            label: 'Notepad'),
+                icon: const Icon(Icons.star)),
+            label: 'Favourite'),
       ],
-    );
-  }
-}
-
-class TextViewForNoWords extends StatelessWidget {
-  const TextViewForNoWords({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: DefaultTextStyle(
-          style: const TextStyle(
-              color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
-          child: AnimatedTextKit(
-            repeatForever: true,
-            animatedTexts: [
-              TyperAnimatedText('No Rhyme Words Found.'),
-              TyperAnimatedText('Search Again.')
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

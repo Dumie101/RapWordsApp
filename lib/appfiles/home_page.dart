@@ -1,13 +1,13 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutterapp/get_words.dart';
-import 'package:flutterapp/main.dart';
+import 'package:flutterapp/api/get_words.dart';
+import 'package:flutterapp/appfiles/main_page.dart';
 import 'package:flutterapp/provider/bookmark_model.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(
-    ChangeNotifierProvider(create: (_) => WordBloc(), child: HomePage()));
+    ChangeNotifierProvider(create: (_) => WordBloc(), child: const HomePage()));
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -18,6 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _LandingPage extends State<HomePage> {
   final _textController = TextEditingController();
+  List<Color> colors = [];
 
   @override
   Widget build(BuildContext context) {
@@ -50,33 +51,48 @@ class _LandingPage extends State<HomePage> {
             ),
           ),
           Expanded(
-            child: Container(
-              margin: const EdgeInsets.only(
-                  left: 35, top: 30, right: 35, bottom: 0),
-              child: TextField(
-                  controller: _textController,
-                  decoration: InputDecoration(
-                      hintText: 'Search',
-                      suffixIcon: IconButton(
-                          padding: const EdgeInsets.only(left: 20),
-                          onPressed: () {
-                            _textController.clear();
-                          },
-                          icon: const Icon(Icons.clear))),
-                  onSubmitted: (value) {
-                    Services.getRhymeWords(value).then((rhymeWords) {
-                      List<Color> colors =  List.generate(rhymeWords.length, (index) => Colors.blueGrey);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  MyMainPage(words: rhymeWords, colors: colors)));
-                    });
-                  }),
-            ),
+            child: SearchBar(textController: _textController),
           )
         ],
       ));
     }));
+  }
+}
+
+class SearchBar extends StatelessWidget {
+  const SearchBar({
+    Key? key,
+    required TextEditingController textController,
+  }) : _textController = textController, super(key: key);
+
+  final TextEditingController _textController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(
+          left: 35, top: 30, right: 35, bottom: 0),
+      child: TextField(
+          controller: _textController,
+          decoration: InputDecoration(
+              hintText: "Search ...",
+              suffixIcon: IconButton(
+                  padding: const EdgeInsets.only(left: 20),
+                  onPressed: () {
+                    _textController.clear();
+                  },
+                  icon: const Icon(Icons.clear))),
+          onSubmitted: (userInput) {
+            Services.getRhymeWords(userInput).then((rhymeWords) {
+              List<Color> colors = List.generate(
+                  rhymeWords.length, (index) => Colors.blueGrey);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MyMainPage(
+                          words: rhymeWords, colors: colors)));
+            });
+          }),
+    );
   }
 }

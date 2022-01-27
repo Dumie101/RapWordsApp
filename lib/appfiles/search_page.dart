@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutterapp/get_words.dart';
-import 'package:flutterapp/main.dart';
+import 'package:flutterapp/api/get_words.dart';
+import 'package:flutterapp/appfiles/main_page.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -40,6 +40,7 @@ class SearchBar extends StatelessWidget {
               child: TextField(
                   controller: _textController,
                   decoration: InputDecoration(
+                      focusedBorder: InputBorder.none,
                       hintText: 'Search',
                       suffixIcon: IconButton(
                           padding: EdgeInsets.only(left: 20),

@@ -3,9 +3,7 @@
 class WordBloc extends ChangeNotifier{
 
   int _count = 0;
-
   List<String> items = [];
-
 
   void addItems(String data){
     items.add(data);
@@ -27,6 +25,4 @@ class WordBloc extends ChangeNotifier{
   List<String> get itemsList{
     return items;
   }
-
-
 }
