@@ -75,7 +75,7 @@ class SearchBar extends StatelessWidget {
       child: TextField(
           controller: _textController,
           decoration: InputDecoration(
-              hintText: "Search ...",
+              hintText: "Search",
               suffixIcon: IconButton(
                   padding: const EdgeInsets.only(left: 20),
                   onPressed: () {
@@ -85,12 +85,12 @@ class SearchBar extends StatelessWidget {
           onSubmitted: (userInput) {
             Services.getRhymeWords(userInput).then((rhymeWords) {
               List<Color> colors = List.generate(
-                  rhymeWords.length, (index) => Colors.blueGrey);
+                  rhymeWords.length, (index) => Colors.lightGreen);
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => MyMainPage(
-                          words: rhymeWords, colors: colors)));
+                          words: rhymeWords, colors: colors, wordSearched: userInput)));
             });
           }),
     );

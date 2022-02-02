@@ -3,29 +3,34 @@ import 'package:flutter/material.dart';
 import 'package:flutterapp/appfiles/home_page.dart';
 import 'package:flutterapp/api/data_parsing.dart';
 import 'package:flutterapp/provider/bookmark_model.dart';
-import 'package:flutterapp/appfiles/search_page.dart';
 import 'package:flutterapp/api/get_words.dart';
 import 'package:provider/provider.dart';
-
 import 'fav_page.dart';
 
 class MyMainPage extends StatefulWidget {
   final List<RhymeWord>? words;
   final List<Color> colors;
+  final String wordSearched;
 
-  const MyMainPage({Key? key, required this.words, required this.colors})
+  const MyMainPage(
+      {Key? key,
+      required this.words,
+      required this.colors,
+      required this.wordSearched})
       : super(key: key);
 
   @override
-  _MyMainPageState createState() =>
-      _MyMainPageState(words: words, colors: colors);
+  _MyMainPageState createState() => _MyMainPageState(
+      words: words, colors: colors, wordSearched: wordSearched);
 }
 
 class _MyMainPageState extends State<MyMainPage> {
-  _MyMainPageState({required this.words, required this.colors});
+  _MyMainPageState(
+      {required this.words, required this.colors, required this.wordSearched});
 
   List<RhymeWord>? words;
   List<Color> colors;
+  String wordSearched;
 
   bool isSearching = false;
 
@@ -62,6 +67,14 @@ class _MyMainPageState extends State<MyMainPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          if(containsWords == true)
+          Card(
+              child: ListTile(
+                  title: Text(wordSearched,
+                      style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.lightGreen)))),
           containsWords == true
               ? Expanded(
                   child: ListView.builder(
@@ -87,18 +100,21 @@ class _MyMainPageState extends State<MyMainPage> {
                                       MaterialPageRoute(
                                           builder: (context) => MyMainPage(
                                               words: rhymeWords,
-                                              colors: colors)));
+                                              colors: colors,
+                                              wordSearched: rhymeWord.word)));
                                 });
                               },
                               trailing: IconButton(
-                                icon: Icon(Icons.star, color: colors[index]),
+                                icon: wordBloc.items.contains(rhymeWord.word)
+                                    ? Icon(Icons.star, color: colors[index])
+                                    : const Icon(Icons.star_border),
                                 onPressed: () {
                                   setState(() {
-                                    if (colors[index] == Colors.blueGrey) {
-                                      colors[index] = Colors.green;
+                                    if (!wordBloc.items
+                                        .contains(rhymeWord.word)) {
+                                      colors[index] = Colors.lightGreen;
                                       wordBloc.addItems(rhymeWord.word);
                                     } else {
-                                      colors[index] = Colors.blueGrey;
                                       wordBloc.removeItems(rhymeWord.word);
                                     }
                                   });
@@ -133,17 +149,19 @@ class AppBarSearchBar extends StatelessWidget {
             enabledBorder: InputBorder.none,
             errorBorder: InputBorder.none,
             disabledBorder: InputBorder.none,
-            hintText: "Search ..."),
+            hintText: "Search"),
         controller: _textController,
         onSubmitted: (userInput) {
           Services.getRhymeWords(userInput).then((rhymeWords) {
             List<Color> colors =
-                List.generate(rhymeWords.length, (index) => Colors.blueGrey);
+                List.generate(rhymeWords.length, (index) => Colors.lightGreen);
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        MyMainPage(words: rhymeWords, colors: colors)));
+                    builder: (context) => MyMainPage(
+                        words: rhymeWords,
+                        colors: colors,
+                        wordSearched: userInput)));
           });
         });
   }
