@@ -23,11 +23,13 @@ class _FavPageState extends State<FavPage> {
     bool containsWords = wordBloc.items.isNotEmpty;
 
     return Scaffold(
+      backgroundColor: Colors.lightBlue,
         body: containsWords
             ? ListView.builder(
                 itemCount: wordBloc.items.length,
                 itemBuilder: (context, index) {
                   return Card(
+                    color: Colors.lightBlue,
                     child: Slidable(
                       key: UniqueKey(),
                       startActionPane: ActionPane(
@@ -52,7 +54,7 @@ class _FavPageState extends State<FavPage> {
                             style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.lightGreen)),
+                                color: Colors.white)),
                       ),
                     ),
                   );
@@ -95,7 +97,7 @@ class TextViewForNoWordsSaved extends StatelessWidget {
     return Center(
       child: DefaultTextStyle(
         style: const TextStyle(
-            color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
+            color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold),
         child: AnimatedTextKit(
           repeatForever: true,
           animatedTexts: [
