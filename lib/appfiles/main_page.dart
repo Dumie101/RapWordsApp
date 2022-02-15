@@ -218,7 +218,7 @@ class BuildBottomNav extends StatelessWidget {
           icon: IconButton(
               onPressed: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const HomePage()));
+                    MaterialPageRoute(builder: (context) => HomePage()));
               },
               icon: const Icon(Icons.home)),
           label: 'Home',

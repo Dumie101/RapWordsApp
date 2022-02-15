@@ -42,7 +42,7 @@ class _FavPageState extends State<FavPage> {
                         children: [
                           SlidableAction(
                             onPressed: doNothing,
-                            backgroundColor: Color(0xFFFE4A49),
+                            backgroundColor: const Color(0xFFFE4A49),
                             foregroundColor: Colors.white,
                             icon: Icons.delete,
                             label: 'Delete',
@@ -59,7 +59,7 @@ class _FavPageState extends State<FavPage> {
                     ),
                   );
                 })
-            : TextViewForNoWordsSaved(),
+            : const TextViewForNoWordsSaved(),
         bottomNavigationBar: BottomNavigationBar(
           showSelectedLabels: false,
           showUnselectedLabels: false,
@@ -77,7 +77,7 @@ class _FavPageState extends State<FavPage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const HomePage()));
+                            builder: (context) => HomePage()));
                   },
                   icon: const Icon(Icons.home)),
               label: 'Home',

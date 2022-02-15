@@ -3,25 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutterapp/api/get_words.dart';
 import 'package:flutterapp/appfiles/main_page.dart';
-import 'package:flutterapp/provider/bookmark_model.dart';
-import 'package:provider/provider.dart';
-import 'package:showcaseview/showcaseview.dart';
-import 'package:flutterapp/appfiles/onboarding.dart';
 
-void main() => runApp(Onboarding());
 
-//ChangeNotifierProvider(create: (_) => WordBloc(), child: const HomePage()));
-
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
-
-  @override
-  State<HomePage> createState() => _LandingPage();
-}
-
-class _LandingPage extends State<HomePage> {
+class HomePage extends StatelessWidget {
   final _textController = TextEditingController();
   List<Color> colors = [];
+
+  HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

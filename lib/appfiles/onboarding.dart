@@ -1,24 +1,90 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterapp/appfiles/home_page.dart';
+import 'package:flutterapp/provider/bookmark_model.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
-class Onboarding extends StatelessWidget {
-  final controller = PageController();
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.clear();
+  final showHome = prefs.getBool('showHome') ?? false;
+
+  runApp(OnBoardingPage(showHome: showHome));
+}
+
+class OnBoardingPageBody extends StatefulWidget {
+  const OnBoardingPageBody({
+    Key? key,
+    required this.controller,
+    required this.isLastPage,
+  }) : super(key: key);
+
+  final PageController controller;
+  final bool isLastPage;
+
 
   @override
-  void dispose() {
-    controller.dispose();
-  }
+  OnBoardingBody createState() => OnBoardingBody(controller: controller, isLastPage: isLastPage);
+}
+
+class OnBoardingPage extends StatefulWidget {
+  final bool showHome;
+
+  OnBoardingPage({
+    Key? key,
+    required this.showHome,
+  }) : super(key: key);
+
+  @override
+  Onboarding createState() => Onboarding(showHome: showHome);
+}
+
+class Onboarding extends State<OnBoardingPage> {
+  final bool showHome;
+
+  Onboarding({required this.showHome});
+
+  final controller = PageController();
+  bool isLastPage = false;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
+      routes: {
+        '/homepage': (context) =>
+            ChangeNotifierProvider(create: (_) => WordBloc(), child: HomePage())
+      },
+      home: showHome
+          ? ChangeNotifierProvider(create: (_) => WordBloc(), child: HomePage()) : OnBoardingPageBody(controller: controller, isLastPage: isLastPage),
+    );
+  }
+}
+
+class OnBoardingBody extends State<OnBoardingPageBody> {
+  OnBoardingBody({
+    required this.controller,
+    required this.isLastPage,
+  });
+
+  PageController controller;
+  bool isLastPage;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
         body: Container(
           padding: const EdgeInsets.only(bottom: 80),
           child: PageView(
             controller: controller,
+            onPageChanged: (index) {
+              setState(() {
+                isLastPage = index == 3;
+              });
+            },
             children: [
               buildPage(
                   color1: Colors.lightBlue,
@@ -26,53 +92,73 @@ class Onboarding extends StatelessWidget {
                   urlImage: 'assets/images/Untitled.png',
                   title: "Welcome To The Party",
                   subtitle:
-                      "A simple and free application made to search for rhymes and slant rhymes. Created by Dumie101"),
+                      "A simple and free application made to search for rhymes. This application was created by @Dumie101. Check out My Github Profile!"),
               buildPage(
                   color1: Colors.lightBlue,
                   color2: Colors.greenAccent,
                   urlImage: 'assets/images/SearchPhoto.png',
                   title: "Search",
-                  subtitle: "Use search functionality to look for rhymes and slant rhymes. Click on the word to continue searching. The rhymes and slant rhymes come from the Datamuse API"),
+                  subtitle:
+                      "Use search functionality to look for rhymes and slant rhymes. Click on the word to continue searching. The rhymes and slant rhymes come from the Datamuse API"),
               buildPage(
                   color1: Colors.lightBlue,
                   color2: Colors.greenAccent,
                   urlImage: 'assets/images/fav.png',
                   title: "Favourite",
-                  subtitle: "Use favourite feature to save words. Use the star icon to save words. Click on the star icon to view your saved words"),
+                  subtitle:
+                      "Use favourite feature to save words. Use the star icon to save words. Click on the star icon to view your saved words"),
               buildPage(
                   color1: Colors.lightBlue,
                   color2: Colors.greenAccent,
                   urlImage: 'assets/images/delete.png',
                   title: "Delete",
-                  subtitle: "In the fav page swipe right to delete a saved word"),
+                  subtitle:
+                      "In the favourite page swipe right to delete a saved word"),
             ],
           ),
         ),
-        bottomSheet: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          height: 80,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextButton(
-                  onPressed: () => controller.jumpToPage(3),
-                  child: const Text('SKIP')),
-              Center(
-                child: SmoothPageIndicator(
-                  controller: controller,
-                  count: 4,
+        bottomSheet: isLastPage
+            ? TextButton(
+                style: TextButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(2)
+                  ),
+                  backgroundColor: Colors.lightBlue,
+                  minimumSize: const Size.fromHeight(80)
+                ),
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  prefs.setBool('showHome', true);
+                  Navigator.pushNamed(context, '/homepage');
+                },
+                child: const Text(
+                  'Get Started',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ))
+            : Container(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                height: 80,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                        onPressed: () => controller.jumpToPage(3),
+                        child: const Text('SKIP')),
+                    Center(
+                      child: SmoothPageIndicator(
+                        controller: controller,
+                        count: 4,
+                      ),
+                    ),
+                    TextButton(
+                        onPressed: () => controller.nextPage(
+                            duration: const Duration(microseconds: 500),
+                            curve: Curves.easeInOut),
+                        child: const Text('NEXT'))
+                  ],
                 ),
               ),
-              TextButton(
-                  onPressed: () => controller.nextPage(
-                      duration: const Duration(microseconds: 500),
-                      curve: Curves.easeInOut),
-                  child: const Text('NEXT'))
-            ],
-          ),
-        ),
-      ),
-    );
+      );
   }
 }
 
@@ -97,21 +183,21 @@ Widget buildPage({
               ),
             ),
           ),
-          SizedBox(height: 20),
-            Text(
+          const SizedBox(height: 20),
+          Text(
             title,
             textAlign: TextAlign.center,
             style: const TextStyle(
                 color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 50),
           Container(
             height: 200,
             color: color2,
             child: Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white, fontSize: 17),
+              style: const TextStyle(color: Colors.white, fontSize:20, fontWeight: FontWeight.bold),
             ),
           )
         ],
