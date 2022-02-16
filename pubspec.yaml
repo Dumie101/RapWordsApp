@@ -46,8 +46,16 @@ dependencies:
 
 
 dev_dependencies:
+  flutter_launcher_icons: "^0.9.2"
   flutter_test:
     sdk: flutter
+
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/1804649.png"
+  adaptive_icon_background: "assets/images/77f1a2a7f6c55db52c0ccf7181d7aeb2.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -67,6 +75,8 @@ flutter:
     - assets/images/SearchPhoto.png
     - assets/images/fav.png
     - assets/images/delete.png
+    - assets/images/1804649.png
+    - assets/images/77f1a2a7f6c55db52c0ccf7181d7aeb2.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

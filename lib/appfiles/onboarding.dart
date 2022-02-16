@@ -92,28 +92,28 @@ class OnBoardingBody extends State<OnBoardingPageBody> {
                   urlImage: 'assets/images/Untitled.png',
                   title: "Welcome To The Party",
                   subtitle:
-                      "A simple and free application made to search for rhymes. This application was created by @Dumie101. Check out My Github Profile!"),
+                      "A simple and free application made to search for rhymes. This application was created by @Dumie101. No ads, No payment, No Login."),
               buildPage(
                   color1: Colors.lightBlue,
                   color2: Colors.greenAccent,
                   urlImage: 'assets/images/SearchPhoto.png',
                   title: "Search",
                   subtitle:
-                      "Use search functionality to look for rhymes and slant rhymes. Click on the word to continue searching. The rhymes and slant rhymes come from the Datamuse API"),
+                      "Use search functionality to look for rhymes and slant rhymes. Click on the word to continue searching. The rhymes and slant rhymes come from the Datamuse API."),
               buildPage(
                   color1: Colors.lightBlue,
                   color2: Colors.greenAccent,
                   urlImage: 'assets/images/fav.png',
                   title: "Favourite",
                   subtitle:
-                      "Use favourite feature to save words. Use the star icon to save words. Click on the star icon to view your saved words"),
+                      "Use the favourite feature to save words. Use the star icon to save words. Click on the star icon to view your saved words."),
               buildPage(
                   color1: Colors.lightBlue,
                   color2: Colors.greenAccent,
                   urlImage: 'assets/images/delete.png',
                   title: "Delete",
                   subtitle:
-                      "In the favourite page swipe right to delete a saved word"),
+                      "In the favourite page swipe right to delete a saved word. Favourite the word again from the main page to get the word back."),
             ],
           ),
         ),
@@ -174,6 +174,7 @@ Widget buildPage({
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const SizedBox(height: 62),
           Expanded(
             child: Container(
               color: color1,
@@ -190,14 +191,14 @@ Widget buildPage({
             style: const TextStyle(
                 color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 50),
+          const SizedBox(height: 25),
           Container(
+            padding: EdgeInsets.symmetric(vertical: 0, horizontal: 35),
             height: 200,
             color: color2,
             child: Text(
               subtitle,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white, fontSize:20, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: Colors.white, fontSize: 16),
             ),
           )
         ],
